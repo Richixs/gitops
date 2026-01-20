@@ -5,7 +5,7 @@ metadata:
   namespace: portfolio-prod
 spec:
   rules:
-    - host: blog.richixs.dev
+    - host: richixs.dev
       http:
         paths:
           - path: /
