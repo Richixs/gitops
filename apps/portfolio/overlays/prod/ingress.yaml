@@ -15,3 +15,14 @@ spec:
                 name: portfolio
                 port:
                   number: 80
+
+    - host: www.richixs.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: portfolio
+                port:
+                  number: 80
