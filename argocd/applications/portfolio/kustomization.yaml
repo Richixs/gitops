@@ -3,4 +3,3 @@ kind: Kustomization
 
 resources:
   - portfolio-prod.yaml
-  - portfolio-prod-ingress.yaml
