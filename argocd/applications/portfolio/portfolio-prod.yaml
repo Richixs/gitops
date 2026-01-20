@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: portfolio-prod
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: portfolio
+  source:
+    repoURL: git@github.com:Richixs/gitops.git
+    targetRevision: main
+    path: apps/portfolio/overlays/prod
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: portfolio-prod
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
