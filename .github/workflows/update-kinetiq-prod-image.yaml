@@ -1,0 +1,84 @@
+name: Update Kinetiq Production Image
+
+on:
+  repository_dispatch:
+    types:
+      - update-kinetiq-frontend-prod
+  workflow_dispatch:
+    inputs:
+      image:
+        description: Full image reference (e.g. ghcr.io/richixs/kinetiq:prod-<sha>)
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-kinetiq-prod-image
+  cancel-in-progress: true
+
+jobs:
+  update-image:
+    if: github.event_name == 'workflow_dispatch' || github.event.client_payload.app == 'kinetiq'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout GitOps repo
+        uses: actions/checkout@v4
+
+      - name: Resolve image and tag
+        id: vars
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          IMAGE_FROM_DISPATCH="${{ github.event.client_payload.image }}"
+          IMAGE_FROM_INPUT="${{ inputs.image }}"
+
+          IMAGE="${IMAGE_FROM_DISPATCH:-$IMAGE_FROM_INPUT}"
+
+          if [[ -z "$IMAGE" ]]; then
+            echo "No image provided from dispatch payload or workflow input."
+            exit 1
+          fi
+
+          if [[ "$IMAGE" != ghcr.io/*/kinetiq:* ]]; then
+            echo "Unexpected image format: $IMAGE"
+            exit 1
+          fi
+
+          TAG="${IMAGE##*:}"
+
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Update production overlay image tag
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          FILE="apps/kinetiq/overlays/prod/kustomization.yaml"
+          TAG="${{ steps.vars.outputs.tag }}"
+
+          sed -i.bak '/name: ghcr.io\/richixs\/kinetiq/{n;s/newTag: .*/newTag: '"$TAG"'/;}' "$FILE"
+          rm -f "$FILE.bak"
+
+          echo "Updated $FILE to tag: $TAG"
+
+      - name: Commit and push changes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet; then
+            echo "No changes detected; skipping commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add apps/kinetiq/overlays/prod/kustomization.yaml
+          git commit -m "chore(kinetiq): update production image to ${{ steps.vars.outputs.tag }}"
+          git push

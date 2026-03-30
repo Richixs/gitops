@@ -3,3 +3,4 @@ kind: Kustomization
 
 resources:
   - kinetiq-develop.yaml
+  - kinetiq-prod.yaml
