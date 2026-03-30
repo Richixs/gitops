@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kinetiq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kinetiq
+  template:
+    metadata:
+      labels:
+        app: kinetiq
+    spec:
+      containers:
+        - name: kinetiq
+          image: ghcr.io/richixs/kinetiq:dev-latest
+          ports:
+            - containerPort: 80

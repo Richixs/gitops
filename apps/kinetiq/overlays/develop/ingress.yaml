@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kinetiq
+  namespace: kinetiq-develop
+spec:
+  rules:
+    - host: develop.kinetiq.scesi.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kinetiq
+                port:
+                  number: 80
