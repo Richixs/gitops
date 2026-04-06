@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kinetiq-backend
+  namespace: kinetiq-backend-prod
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  rules:
+    - host: api.kinetiq.scesi.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kinetiq-backend
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - api.kinetiq.scesi.dev
+      secretName: kinetiq-backend-prod-tls-secret

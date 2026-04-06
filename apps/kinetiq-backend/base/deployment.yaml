@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kinetiq-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kinetiq-backend
+  template:
+    metadata:
+      labels:
+        app: kinetiq-backend
+    spec:
+      containers:
+        - name: kinetiq-backend
+          image: ghcr.io/richixs/kinetiq-backend:dev-latest
+          envFrom:
+            - secretRef:
+                name: kinetiq-backend-secrets
+          ports:
+            - containerPort: 80
