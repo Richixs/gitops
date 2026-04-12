@@ -4,6 +4,7 @@ metadata:
   name: portfolio
   namespace: portfolio-prod
 spec:
+  ingressClassName: nginx
   rules:
     - host: richixs.dev
       http:
