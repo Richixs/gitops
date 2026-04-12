@@ -4,7 +4,7 @@ metadata:
   name: kinetiq-backend-prod
   namespace: argocd
 spec:
-  project: default
+  project: richixs
   source:
     repoURL: git@github.com:Richixs/gitops.git
     targetRevision: main
