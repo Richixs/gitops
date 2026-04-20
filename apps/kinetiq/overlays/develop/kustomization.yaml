@@ -7,7 +7,7 @@ resources:
 
 images:
   - name: ghcr.io/richixs/kinetiq
-    newTag: dev-23afa2f8666b8ba8b7f7a5ef341483612a5bdf8c
+    newTag: dev-caaf49131fab7583cb54fb88ba69ef65eaefe480
 
 replicas:
   - name: kinetiq
